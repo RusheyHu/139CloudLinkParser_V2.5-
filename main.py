@@ -176,7 +176,7 @@ class LoginWorker(QThread):
                     context = browser_type.launch_persistent_context(str(PROFILE_DIR), channel="chrome", **launch_args)
                 pages = context.pages
                 page = pages[0] if pages else context.new_page()
-                page.goto("https://yun.139.com/shareweb/", wait_until="domcontentloaded", timeout=60000)
+                page.goto("https://yun.139.com/", wait_until="domcontentloaded", timeout=60000)
                 self.log.emit("浏览器已打开。请完成扫码；程序正在等待登录态 Cookie……")
                 deadline = time.time() + 240
                 found = {}
