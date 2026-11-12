@@ -1,0 +1,45 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+    paths:
+      - "main.py"
+      - "requirements.txt"
+      - "build_windows.bat"
+      - ".github/workflows/build-windows.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build EXE
+        shell: cmd
+        run: |
+          pyinstaller --noconfirm --clean --windowed --name 139CloudLinkParserV2_5 --collect-all PySide6 --collect-all playwright main.py
+
+      - name: Package
+        shell: pwsh
+        run: |
+          Compress-Archive -Path "dist/139CloudLinkParserV2_5" -DestinationPath "139CloudLinkParserV2_5-Windows-x64.zip" -Force
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 139CloudLinkParserV2_5-Windows-x64
+          path: 139CloudLinkParserV2_5-Windows-x64.zip
+          retention-days: 14
